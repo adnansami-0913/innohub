@@ -1,2 +1,0 @@
-# innohub
-Academic Project Repository
