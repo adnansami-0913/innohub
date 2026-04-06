@@ -2408,7 +2408,13 @@ function DetailPage({
     className: "detail-meta"
   }, /*#__PURE__*/React.createElement("div", {
     className: "meta-item"
-  }, "\uD83D\uDC64 ", /*#__PURE__*/React.createElement("strong", null, project.author || 'Anonymous')), project.ieeeRef && /*#__PURE__*/React.createElement("div", {
+  }, "\uD83D\uDC64 ", /*#__PURE__*/React.createElement("strong", null, project.author || 'Anonymous')), project.webLink && /*#__PURE__*/React.createElement("a", {
+    href: project.webLink,
+    target: "_blank",
+    rel: "noopener noreferrer",
+    className: "meta-item",
+    style: {color:'var(--primary)', textDecoration:'none', display:'flex', alignItems:'center', gap:'4px', fontSize:'13px', fontWeight:'600'}
+  }, "\uD83D\uDD17 View Project / Portfolio"), project.ieeeRef && /*#__PURE__*/React.createElement("div", {
     className: "meta-item"
   }, "\uD83D\uDCF0 ", /*#__PURE__*/React.createElement("strong", null, project.ieeeRef)))), /*#__PURE__*/React.createElement("div", {
     className: "detail-body"
@@ -2613,7 +2619,8 @@ function SubmitPage({
         domain: '',
         abstract: '',
         technologies: '',
-        author: ''
+        author: '',
+        webLink: ''
       };
     } catch (e) {
       return {
@@ -2621,7 +2628,8 @@ function SubmitPage({
         domain: '',
         abstract: '',
         technologies: '',
-        author: ''
+        author: '',
+        webLink: ''
       };
     }
   });
@@ -2629,14 +2637,15 @@ function SubmitPage({
   const [submitting, setSubmitting] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const ABSTRACT_MIN = 50;
-  const hasDraft = !!(form.title || form.abstract || form.technologies || form.author || form.domain);
+  const hasDraft = !!(form.title || form.abstract || form.technologies || form.author || form.domain || form.webLink);
   function clearDraft() {
     setForm({
       title: '',
       domain: '',
       abstract: '',
       technologies: '',
-      author: ''
+      author: '',
+      webLink: ''
     });
     try {
       sessionStorage.removeItem('innohub_form_draft');
@@ -2655,6 +2664,7 @@ function SubmitPage({
     if (!form.domain) e.domain = 'Please select a domain';
     if (!form.abstract.trim() || form.abstract.length < ABSTRACT_MIN) e.abstract = 'Abstract must be at least 50 characters';
     if (!form.technologies.trim()) e.technologies = 'At least one technology is required';
+    if (form.webLink.trim() && !/^https?:\/\//i.test(form.webLink.trim())) e.webLink = 'Please enter a valid URL starting with http:// or https://';
     return e;
   }
   function handleChange(e) {
@@ -2687,6 +2697,7 @@ function SubmitPage({
         technologies: form.technologies.split(',').map(t => t.trim()).filter(Boolean),
         year: new Date().getFullYear(),
         author: form.author || 'Anonymous',
+        webLink: form.webLink.trim() || '',
         views: 0,
         createdAt: new Date().toISOString().split('T')[0],
         ieeeRef: ''
@@ -2857,7 +2868,24 @@ function SubmitPage({
     value: form.author,
     onChange: handleChange,
     placeholder: "Your name (optional)"
-  }))), /*#__PURE__*/React.createElement("div", {
+  })), /*#__PURE__*/React.createElement(Field, {
+    name: "webLink",
+    label: "Project / Portfolio Link",
+    hint: "Optional — add your GitHub, portfolio, or project page URL",
+    errors: errors,
+    form: form
+  }, /*#__PURE__*/React.createElement("div", {
+    style: {display:'flex', alignItems:'center', gap:'8px'}
+  }, /*#__PURE__*/React.createElement("span", {
+    style: {fontSize:'18px', flexShrink:0}
+  }, "\uD83D\uDD17"), /*#__PURE__*/React.createElement("input", {
+    className: "form-input" + (errors.webLink ? " error" : ""),
+    name: "webLink",
+    value: form.webLink,
+    onChange: handleChange,
+    placeholder: "https://github.com/yourusername/yourproject",
+    style: {flex:1}
+  })))), /*#__PURE__*/React.createElement("div", {
     className: "form-footer"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn-submit",
@@ -2884,7 +2912,7 @@ function SubmitPage({
       fontSize: '13px',
       color: 'var(--text-secondary)'
     }
-  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Domain:"), " ", form.domain), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Author:"), " ", form.author || 'Anonymous')), /*#__PURE__*/React.createElement("div", {
+  }, /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Domain:"), " ", form.domain), /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Author:"), " ", form.author || 'Anonymous'), form.webLink.trim() && /*#__PURE__*/React.createElement("div", null, /*#__PURE__*/React.createElement("strong", null, "Link:"), " ", /*#__PURE__*/React.createElement("a", {href:form.webLink.trim(), target:"_blank", rel:"noopener noreferrer", style:{color:'var(--primary)', fontSize:'12px', wordBreak:'break-all'}}, form.webLink.trim()))), /*#__PURE__*/React.createElement("div", {
     className: "confirm-row"
   }, /*#__PURE__*/React.createElement("button", {
     className: "btn-cancel",
